@@ -1,0 +1,21 @@
+ 'Растровый шрифт  цифра 0 или буква О
+import "LCDRu"
+LCDRu.Test(1, 0, 1)     ' проверяем русские буквы для шрифта № 0
+LCDRu.Test(1, 0, 0)     ' проверяем английские буквы для шрифта № 0
+LCDRu.Test(1, 1, 1)     ' проверяем русские буквы для шрифта № 1
+LCDRu.Test(1, 1, 0)     ' проверяем английские буквы для шрифта № 1
+LCDRu.Test(1, 2, 1)     ' проверяем русские буквы для шрифта № 2 
+LCDRu.Test(1, 2, 0)     ' проверяем английские буквы для шрифта № 2
+LCD.Clear()
+Buttons.Wait()
+btn = Buttons.GetClicks()
+StrIn = "/0DDTLBNT BVZ = "
+While btn <> "E"
+  LCD.Clear()
+  LCDRu.Klav(StrIn, Stroka)
+  LCDRu.TextRu(1, 0, 10, 2, Stroka)
+  Buttons.Wait()
+  StrIn = Stroka
+  btn = Buttons.GetClicks()
+EndWhile
+

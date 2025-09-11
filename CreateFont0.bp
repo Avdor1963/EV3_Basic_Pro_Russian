@@ -1,0 +1,76 @@
+' Создаем файл с растровым шрифтом (фонтом) с номером 0 - имя файла фонта "Font8x8_0.fnt".
+' После выполнения программы следует выгрузить полученный файл и сохранить его для дальнейшего использования.
+' В дальнейшем для использования русских букв необходимо загрузить этот файл с фонтом в ту же директорию EV3,
+' что и целевой файл, в котором будем использовать модуль LCDRu.
+' При любом (вернее первом же) обращении к методам модуля LCDRu, проверяем загружен ли шрифт 0, и, если нет,
+' то загружаем шрифт из файла во внутренний векторный массив FontChars8x8_0 EV3, делается это только один раз.
+' Таким образом потом не должно тормозить, так как байты растра берем прямо с внутреннего массива.
+' Порядок кода русских букв - определен кодировкой английских букв, последовательно смещенной в наш диапазон
+' При этом вместо английской буквы или символа будет выводится русская буква, находящяяся на той же кнопке.
+' Код с 0-25 ("A"-"Z"), с 26-32 - (""", "<", "~", ":", "{", "}", ">"), с 33-58 ("a"-"z"),
+' с 59-66 - ("'", ",", "`", ";", "[", "]", ".", "#") 
+' Программа просто перебирает коды русских букв с 0 по 66 (то есть 67 символов), для каждого кода вызывается
+' функция GetFont модуля с растровым шрифтом, которая возвращает 8 чисел с растром русской буквы.
+' Растр последовательно записываем в файл фонта. Так как числа в Small Basic могут быть только 4 байтными,
+' то приходится в файл записывать лишние байты. Объем файла фонта получается 67 * 8 * 4 = 2144 байта.
+
+NameFont = "Font8x8_0"
+import "Font8x8_0"        ' Модуль с растром для шрифта 0                             
+import "LCDRu"
+
+FFont = EV3File.OpenWrite(NameFont + ".fnt")
+
+For codChar = 65 To 90                               'Записываем в файл фонта растр Прописных русских букв на кнопках с английскими буквами
+    chr = Text.GetCharacter(codChar)
+    Font8x8_0.GetFont8x8_0(chr, FontChar)            ' коды с 0 - 25 
+    EV3File.WriteNumberArray(FFont, 8, FontChar)
+EndFor  
+    Font8x8_0.GetFont8x8_0("<", FontChar)            '"<" - "Б"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)     ' код - 26
+    Font8x8_0.GetFont8x8_0("~", FontChar)   		     '"~" - "Ё"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 27
+    Font8x8_0.GetFont8x8_0(":", FontChar)  			     '":" - "Ж"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)  	 ' код - 28
+    Font8x8_0.GetFont8x8_0("{", FontChar)   		     '"{" - "Х"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 29
+    Font8x8_0.GetFont8x8_0("}", FontChar) 		       '"}" - "Ъ"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 30
+    chr = Text.GetCharacter(34)             
+    Font8x8_0.GetFont8x8_0(chr, FontChar)  	  	     '""" - "Э"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 31
+    Font8x8_0.GetFont8x8_0(">", FontChar)    	    	 '">" - "Ю"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)  	 'код - 32
+For codChar = 97 To 122                      	    	 'Записываем в файл фонта растр строчных русских букв на кнопках с английскими буквами
+    chr = Text.GetCharacter(codChar)
+    Font8x8_0.GetFont8x8_0(chr, FontChar)    	    	 ' коды с 33 - 58 
+    EV3File.WriteNumberArray(FFont, 8, FontChar)
+EndFor  
+    Font8x8_0.GetFont8x8_0(",", FontChar)  		       '"," - "б"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 59
+    Font8x8_0.GetFont8x8_0("`", FontChar) 		       '"`" - "ё"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 60
+    Font8x8_0.GetFont8x8_0(";", FontChar) 		       '";" - "ж"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 61
+    Font8x8_0.GetFont8x8_0("[", FontChar)   		     '"[" - "х"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 62
+    Font8x8_0.GetFont8x8_0("]", FontChar)  		    	 '"]" - "ъ"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 63
+    chr = Text.GetCharacter(39)             
+    Font8x8_0.GetFont8x8_0(chr, FontChar)		         '"'" - "э"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   ' код - 64
+    Font8x8_0.GetFont8x8_0(".", FontChar)  			     '"." - "ю"
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   'код - 65
+    Font8x8_0.GetFont8x8_0("#", FontChar)  			     '"#" - "№"	- спецсимвол - русский номер
+    EV3File.WriteNumberArray(FFont, 8, FontChar)	   'код - 66
+
+EV3File.Close(FFont)
+
+' Проверка создания файла с фонтом - выводим сообщение на экран ЖКИ EV3 пользуясь методами модуля LCDRu
+LCDRu.Clear()
+LCDRu.TextRu(1, 30, 10, 0, "Afqk")
+LCDRu.TextRu(1, 20, 40, 0, "/a" + NameFont + ".fnt")
+LCDRu.TextRu(1, 30, 70, 0, "pfgbcfy")
+Buttons.Wait()
+Buttons.Flush()
+LCDRu.Test(1, 2, 1)           ' Выводим тестовый экран с только что введенным шрифтом
+
