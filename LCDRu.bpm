@@ -436,7 +436,6 @@ Function Test(in number c, in number f, in number lang)
 EndFunction
 '========================================================================
 private
-
 ' временный признак, что нет растра для отображения символа
 number pr
 ' текущяя раскладка выводимого методом TextRu текста переключается по /a - английская /r - русская
@@ -774,3 +773,4 @@ EndFunction
   'font16x16.GetFont16x16(char, S)
   'pr = font16x16.pr
 'EndFunction
+
